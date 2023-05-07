@@ -167,14 +167,12 @@ export async function getServerSideProps() {
   const date = `${Now.getMonth() + 1}-${Now.getDate()}-${Now.getFullYear() % 100}`
   const day = await getScheduleDay(date);
   const scheduleList = await getScheduleList(day);
-  const weather = await getWeather();
   const menuList = await getMenuList();
   const calendarList = await getCalendarList();
   
   return {
     props: {
       ...scheduleList,
-      ...weather,
       menuList,
       date,
       calendarList,
