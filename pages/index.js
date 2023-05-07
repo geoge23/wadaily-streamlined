@@ -18,7 +18,6 @@ import getCalendarList from "../functions/calendar";
 import getScheduleDay from "../functions/day";
 import getMenuList from "../functions/menuList";
 import getScheduleList from "../functions/schedule";
-import getWeather from "../functions/weather";
 
 export default function Home(props) {
   const [schedule, setSchedule] = useState(props.schedule);
