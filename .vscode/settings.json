@@ -1,0 +1,17 @@
+{
+    "css.validate": false,
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": false,
+        "strings": true
+    },
+    "cSpell.words": [
+        "Butterknife",
+        "thebutterknifewa",
+        "Verifys",
+        "wadaily"
+    ],
+    "workbench.colorCustomizations": {
+        "editorUnnecessaryCode.border": "#ff0000",
+    }
+}
