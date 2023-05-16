@@ -20,7 +20,8 @@ export default dbConnect
 const DaysSchema = new mongoose.Schema({
     date: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     schedule: {
         type: String,
@@ -33,7 +34,8 @@ const Days = mongoose.models.days || mongoose.model('days', DaysSchema)
 const SchedulesSchema = new mongoose.Schema({
     "name": {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     "friendlyName": {
         type: String,

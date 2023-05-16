@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
+    "csv-parse": "^5.3.10",
     "git-revision-webpack-plugin": "^5.0.0",
     "mongoose": "^6.9.0",
     "next": "^13.1.5",
