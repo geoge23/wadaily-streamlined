@@ -7,7 +7,7 @@ export default async function getScheduleList(name) {
     if (sch) {
         sch._id = sch._id.toString();
         sch.schedule = sch.schedule.map(e => {
-            e._id = e._id.toString();
+            if (e._id) e._id = e._id.toString();
             return e;
         })
     }
