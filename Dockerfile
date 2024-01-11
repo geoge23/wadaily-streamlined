@@ -1,4 +1,4 @@
-FROM node:17
+FROM node:21
 WORKDIR /usr/src/app
 
 # Downloading dependencies
