@@ -1,5 +1,5 @@
-import { parse } from 'csv-parse/sync'
-import { Days, Schedules } from './mongo'
+import { parse } from 'csv-parse/sync';
+import { Days, Schedules } from './mongo.js';
 
 /** 
  * @typedef {{
@@ -51,6 +51,8 @@ function generateWAFormatDate(date) {
  * @param {string} csv 
  */
 async function parseAndUpdateDays(csv) {
+    console.log("Parsing and uploading days...")
+
     /**
      * @type {CSVDay[]}
      */
@@ -87,19 +89,36 @@ async function parseAndUpdateDays(csv) {
         })
 
         promises.push(
-            dayDocument.save()
-                .catch(e => {
-                    // if the day already exists, we can just update it
-                    if (e.code == 11000) {
-                        promises.push(Days.findOneAndUpdate({date: waDate}, {schedule: day['Event Caption']}))
-                    } else {
-                        throw e;
-                    }
-                })
+            {
+                promise: dayDocument.save()
+                    .catch(e => {
+                        // if the day already exists, we can just update it
+                        if (e.code == 11000) {
+                            promises.push({
+                                promise: Days.findOneAndUpdate({ date: waDate }, { schedule: day['Event Caption'] }),
+                                date: waDate + " (update)"
+                            })
+                            console.log()
+                        } else {
+                            throw e;
+                        }
+                    }),
+                date: waDate
+            }
         )
     }
 
-    await Promise.all(promises)
+    let initialLength = promises.length;
+    while (promises.length > 0) {
+        process.stdout.clearLine(0);
+        process.stdout.cursorTo(0);
+        process.stdout.write(`${initialLength - promises.length + 1} / ${initialLength} days saved - Working on ${promises[promises.length - 1].date}`);
+        await promises.pop().promise;
+        await new Promise(resolve => setTimeout(resolve, 5));
+    }
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
+    process.stdout.write(`All ${initialLength} days saved\n`)
 }
 
 /**
@@ -172,6 +191,8 @@ function generateScheduleEvent(event) {
  * @returns {Promise<CSVEvent[]>} A list of events that could not be parsed into a schedule
  */
 async function parseAndUpdateSchedules(csv) {
+    console.log("Parsing and uploading schedules...")
+
     /**
      * @type {Schedules[]}
      */
@@ -214,7 +235,7 @@ async function parseAndUpdateSchedules(csv) {
         schedule.schedule.sort((a, b) => {
             const aTime = a.startTime.split(' ');
             const bTime = b.startTime.split(' ');
-            
+
             let aHour = parseInt(aTime[0].split(':')[0]);
             if (aTime[1] == 'PM' && aHour != 12) aHour += 12;
 
@@ -230,21 +251,39 @@ async function parseAndUpdateSchedules(csv) {
 
         const scheduleDocument = new Schedules(schedule)
         promises.push(
-            scheduleDocument.save()
-                .catch(e => {
-                    // if the schedule already exists, we can just update it
-                    if (e.code == 11000) {
-                        promises.push(Schedules.findOneAndUpdate({name: schedule.name}, schedule))
-                    } else {
-                        throw e;
-                    }
-                })
+            {
+                promise: scheduleDocument.save()
+                    .catch(e => {
+                        // if the schedule already exists, we can just update it
+                        if (e.code == 11000) {
+                            promises.push({
+                                promise: Schedules.findOneAndUpdate({ name: schedule.name }, schedule),
+                                name: schedule.name + " (update)"
+                            })
+                        } else {
+                            throw e;
+                        }
+                    }),
+                name: schedule.name
+            }
         )
     }
 
-    await Promise.all(promises)
+    let initialLength = promises.length;
+    while (promises.length > 0) {
+        process.stdout.clearLine(0);
+        process.stdout.cursorTo(0);
+        process.stdout.write(`${initialLength - promises.length + 1} / ${initialLength} schedules saved - Working on ${promises[promises.length - 1].name}`);
+        await promises.pop().promise;
+        await new Promise(resolve => setTimeout(resolve, 5));
+    }
+
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
+    process.stdout.write(`All ${initialLength} schedules saved\n`)
+
     if (schedules['ORPHAN']) return schedules['ORPHAN'].schedule
-    
+
     return []
 }
 
