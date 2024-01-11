@@ -1,4 +1,5 @@
 import { parse } from 'csv-parse/sync';
+import readline from 'readline';
 import { Days, Schedules } from './mongo.js';
 
 /** 
@@ -110,14 +111,14 @@ async function parseAndUpdateDays(csv) {
 
     let initialLength = promises.length;
     while (promises.length > 0) {
-        process.stdout.clearLine(0);
-        process.stdout.cursorTo(0);
+        readline.clearLine(process.stdout, 0);
+        readline.cursorTo(process.stdout, 0);
         process.stdout.write(`${initialLength - promises.length + 1} / ${initialLength} days saved - Working on ${promises[promises.length - 1].date}`);
         await promises.pop().promise;
         await new Promise(resolve => setTimeout(resolve, 5));
     }
-    process.stdout.clearLine(0);
-    process.stdout.cursorTo(0);
+    readline.clearLine(process.stdout, 0);
+    readline.cursorTo(process.stdout, 0);
     process.stdout.write(`All ${initialLength} days saved\n`)
 }
 
@@ -271,15 +272,15 @@ async function parseAndUpdateSchedules(csv) {
 
     let initialLength = promises.length;
     while (promises.length > 0) {
-        process.stdout.clearLine(0);
-        process.stdout.cursorTo(0);
+        readline.clearLine(process.stdout, 0);
+        readline.cursorTo(process.stdout, 0);
         process.stdout.write(`${initialLength - promises.length + 1} / ${initialLength} schedules saved - Working on ${promises[promises.length - 1].name}`);
         await promises.pop().promise;
         await new Promise(resolve => setTimeout(resolve, 5));
     }
 
-    process.stdout.clearLine(0);
-    process.stdout.cursorTo(0);
+    readline.clearLine(process.stdout, 0);
+    readline.cursorTo(process.stdout, 0);
     process.stdout.write(`All ${initialLength} schedules saved\n`)
 
     if (schedules['ORPHAN']) return schedules['ORPHAN'].schedule
